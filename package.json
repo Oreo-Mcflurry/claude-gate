@@ -1,0 +1,32 @@
+{
+  "name": "@oreo-mcflurry-majang/claude-gate",
+  "version": "1.0.0",
+  "description": "4-Phase Quality Gate System for Claude Code",
+  "bin": {
+    "claude-gate": "./bin/claude-gate.sh"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "quality-gate",
+    "code-review",
+    "security-review",
+    "ai",
+    "plugin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Oreo-Mcflurry/claude-gate.git"
+  },
+  "homepage": "https://github.com/Oreo-Mcflurry/claude-gate",
+  "author": "Oreo-Mcflurry",
+  "license": "MIT",
+  "files": [
+    "bin/",
+    "agents/",
+    "commands/",
+    "claude-md-snippet.md",
+    "install.sh",
+    "uninstall.sh"
+  ]
+}

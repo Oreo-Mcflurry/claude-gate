@@ -37,6 +37,14 @@ Each gate produces a **structured report** with a clear verdict: move forward, r
 
 ## Installation
 
+### npx (Recommended)
+
+```bash
+npx @oreo-mcflurry-majang/claude-gate
+```
+
+### Manual
+
 ```bash
 git clone https://github.com/Oreo-Mcflurry/claude-gate.git
 cd claude-gate
