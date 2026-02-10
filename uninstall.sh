@@ -158,6 +158,7 @@ uninstall_codex() {
     "gate-design"
     "gate-code"
     "gate-release"
+    "gate-status"
   )
 
   # Remove skills

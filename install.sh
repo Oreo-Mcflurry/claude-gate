@@ -178,6 +178,7 @@ install_codex() {
     "gate-design"
     "gate-code"
     "gate-release"
+    "gate-status"
   )
 
   mkdir -p "$CODEX_DIR"
