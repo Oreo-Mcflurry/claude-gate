@@ -4,6 +4,14 @@ set -euo pipefail
 # Claude Gate - Multi-CLI Uninstallation Script
 # Removes gate files from: Claude Code, Codex CLI, Gemini CLI
 
+# ─── Parse flags ───
+ALL_MODE=false
+for arg in "$@"; do
+  case "$arg" in
+    --all|-a) ALL_MODE=true ;;
+  esac
+done
+
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -55,7 +63,10 @@ echo ""
 # ─── Interactive selection ───
 declare -a SELECTED=()
 
-if [ ${#INSTALLED_CLIS[@]} -eq 1 ]; then
+if [ "$ALL_MODE" = true ]; then
+  SELECTED=("${INSTALLED_CLIS[@]}")
+  echo -e "Auto-selected all (--all mode)"
+elif [ ${#INSTALLED_CLIS[@]} -eq 1 ]; then
   SELECTED=("${INSTALLED_CLIS[0]}")
   echo -e "Auto-selected: ${BOLD}${INSTALLED_NAMES[0]}${NC}"
 else

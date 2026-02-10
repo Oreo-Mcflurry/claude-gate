@@ -1,0 +1,134 @@
+name: CI - Install & Uninstall Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-install:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    name: Test on ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # ─── Install CLI tools ───
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code || true
+
+      - name: Install Codex CLI
+        run: npm install -g @openai/codex || true
+
+      # Gemini CLI - install via npm if available
+      - name: Install Gemini CLI
+        run: npm install -g @anthropic-ai/gemini-cli 2>/dev/null || npm install -g @google/gemini-cli 2>/dev/null || true
+
+      # ─── Create config directories (CLIs create these on first run) ───
+      - name: Ensure CLI config directories exist
+        run: |
+          mkdir -p ~/.claude
+          mkdir -p ~/.codex
+          mkdir -p ~/.gemini
+
+      # ─── Test install ───
+      - name: Run install.sh --all
+        run: ./install.sh --all
+
+      - name: Verify Claude Code files installed
+        run: |
+          test -f ~/.claude/agents/gate-keeper.md
+          test -f ~/.claude/agents/spec-reviewer.md
+          test -f ~/.claude/agents/design-reviewer.md
+          test -f ~/.claude/agents/code-reviewer.md
+          test -f ~/.claude/agents/security-reviewer.md
+          test -f ~/.claude/commands/gate.md
+          grep -q "GATE-SYSTEM-START" ~/.claude/CLAUDE.md
+          echo "Claude Code: All files verified"
+
+      - name: Verify Codex CLI files installed
+        run: |
+          test -f ~/.codex/skills/gate-spec/SKILL.md
+          test -f ~/.codex/skills/gate-design/SKILL.md
+          test -f ~/.codex/skills/gate-code/SKILL.md
+          test -f ~/.codex/skills/gate-release/SKILL.md
+          test -f ~/.codex/AGENTS.md
+          echo "Codex CLI: All files verified"
+
+      - name: Verify Gemini CLI files installed
+        run: |
+          test -f ~/.gemini/commands/gate/spec.toml
+          test -f ~/.gemini/commands/gate/design.toml
+          test -f ~/.gemini/commands/gate/code.toml
+          test -f ~/.gemini/commands/gate/release.toml
+          test -f ~/.gemini/commands/gate/status.toml
+          test -f ~/.gemini/agents/spec-reviewer.md
+          test -f ~/.gemini/agents/design-reviewer.md
+          test -f ~/.gemini/agents/code-reviewer.md
+          test -f ~/.gemini/agents/security-reviewer.md
+          echo "Gemini CLI: All files verified"
+
+      # ─── Test uninstall ───
+      - name: Run uninstall.sh --all
+        run: ./uninstall.sh --all
+
+      - name: Verify Claude Code files removed
+        run: |
+          test ! -f ~/.claude/agents/gate-keeper.md
+          test ! -f ~/.claude/agents/spec-reviewer.md
+          test ! -f ~/.claude/commands/gate.md
+          ! grep -q "GATE-SYSTEM-START" ~/.claude/CLAUDE.md 2>/dev/null || true
+          echo "Claude Code: All files removed"
+
+      - name: Verify Codex CLI files removed
+        run: |
+          test ! -d ~/.codex/skills/gate-spec
+          test ! -d ~/.codex/skills/gate-code
+          echo "Codex CLI: All files removed"
+
+      - name: Verify Gemini CLI files removed
+        run: |
+          test ! -d ~/.gemini/commands/gate
+          test ! -f ~/.gemini/agents/spec-reviewer.md
+          test ! -f ~/.gemini/agents/code-reviewer.md
+          echo "Gemini CLI: All files removed"
+
+  # ─── Test npm package install ───
+  test-npm-package:
+    runs-on: ubuntu-latest
+    name: Test npm package structure
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verify package.json
+        run: node -e "const pkg = require('./package.json'); assert = require('assert'); assert(pkg.bin['claude-gate']); assert(pkg.files.includes('agents/')); assert(pkg.files.includes('codex/')); assert(pkg.files.includes('gemini/')); console.log('package.json OK');"
+
+      - name: Verify all packaged files exist
+        run: |
+          test -f bin/claude-gate
+          test -d agents
+          test -d commands
+          test -d codex
+          test -d gemini
+          test -f claude-md-snippet.md
+          test -f install.sh
+          test -f uninstall.sh
+          echo "All packaged files exist"
+
+      - name: Test npm pack
+        run: |
+          npm pack --dry-run 2>&1 | tee pack-output.txt
+          echo "npm pack dry-run OK"

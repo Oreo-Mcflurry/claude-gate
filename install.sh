@@ -6,6 +6,14 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# ─── Parse flags ───
+ALL_MODE=false
+for arg in "$@"; do
+  case "$arg" in
+    --all|-a) ALL_MODE=true ;;
+  esac
+done
+
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -65,7 +73,10 @@ echo ""
 # ─── Interactive selection ───
 declare -a SELECTED=()
 
-if [ ${#AVAILABLE_CLIS[@]} -eq 1 ]; then
+if [ "$ALL_MODE" = true ]; then
+  SELECTED=("${AVAILABLE_CLIS[@]}")
+  echo -e "Auto-selected all (--all mode)"
+elif [ ${#AVAILABLE_CLIS[@]} -eq 1 ]; then
   # Only one CLI available, auto-select
   SELECTED=("${AVAILABLE_CLIS[0]}")
   echo -e "Auto-selected: ${BOLD}${AVAILABLE_NAMES[0]}${NC}"
