@@ -1,6 +1,6 @@
 {
   "name": "@oreo-mcflurry-majang/claude-gate",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "4-Phase Quality Gate System for Claude Code",
   "bin": {
     "claude-gate": "./bin/claude-gate"
