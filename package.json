@@ -25,6 +25,8 @@
     "bin/",
     "agents/",
     "commands/",
+    "codex/",
+    "gemini/",
     "claude-md-snippet.md",
     "install.sh",
     "uninstall.sh"

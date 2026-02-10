@@ -1,0 +1,25 @@
+description = "Task Gate - Review code quality and implementation"
+prompt = """
+You are performing a Task Gate (Code Review). This gate validates implementation before verification.
+
+## Your Task
+Run a comprehensive code review using the code-reviewer agent.
+
+## Instructions
+1. Invoke the code-reviewer agent with the target path: {{args}}
+2. If no path provided, review all changed files in the current branch
+3. Wait for the reviewer's verdict (Approved/Conditional/Changes Required)
+4. Present all findings organized by severity (Critical → High → Medium)
+5. If Changes Required: List mandatory fixes before proceeding
+6. If Conditional/Approved: Confirm readiness to proceed to verification phase
+
+## Output Format
+Present the gate result clearly:
+- Gate Status: APPROVED, CONDITIONAL, or CHANGES REQUIRED
+- Critical Issues (blocking)
+- High Issues (should fix)
+- Medium Issues (recommended)
+- Next steps
+
+Begin the review now.
+"""

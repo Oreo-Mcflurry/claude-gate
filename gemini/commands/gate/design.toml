@@ -1,0 +1,22 @@
+description = "Design Gate - Review architecture and technical design"
+prompt = """
+You are performing a Design Gate review. This gate validates technical design before implementation.
+
+## Your Task
+Run a comprehensive design review using the design-reviewer agent.
+
+## Instructions
+1. Invoke the design-reviewer agent with the design document path: {{args}}
+2. If no path provided, search for design/architecture documents in the current project
+3. Wait for the reviewer's verdict (Pass/Revise)
+4. If Revise: Present feedback and actionable recommendations
+5. If Pass: Confirm readiness to proceed to implementation phase
+
+## Output Format
+Present the gate result clearly:
+- Gate Status: PASS or REVISE
+- Findings summary
+- Next steps
+
+Begin the review now.
+"""

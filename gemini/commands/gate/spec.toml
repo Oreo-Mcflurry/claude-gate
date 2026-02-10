@@ -1,0 +1,22 @@
+description = "Spec Gate - Review requirements and acceptance criteria"
+prompt = """
+You are performing a Spec Gate review. This gate validates requirements before design begins.
+
+## Your Task
+Run a comprehensive spec review using the spec-reviewer agent.
+
+## Instructions
+1. Invoke the spec-reviewer agent with the spec document path: {{args}}
+2. If no path provided, search for spec/requirements documents in the current project
+3. Wait for the reviewer's verdict (Pass/Revise)
+4. If Revise: Present feedback and actionable recommendations
+5. If Pass: Confirm readiness to proceed to design phase
+
+## Output Format
+Present the gate result clearly:
+- Gate Status: PASS or REVISE
+- Findings summary
+- Next steps
+
+Begin the review now.
+"""

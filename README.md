@@ -2,7 +2,7 @@
 
 # Claude Gate
 
-**4-Phase Quality Gate System for Claude Code**
+**4-Phase Quality Gate System for AI Coding Assistants**
 
 Stop shipping bugs. Enforce structured reviews at every development phase.
 
@@ -11,7 +11,7 @@ Stop shipping bugs. Enforce structured reviews at every development phase.
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](pulls)
 [![Hits](https://hits.sh/github.com/Oreo-Mcflurry/claude-gate.svg?label=visitors&color=79C83D)](https://hits.sh/github.com/Oreo-Mcflurry/claude-gate/)
 
-[Installation](#installation) | [Usage](#usage) | [Gates](#gates) | [Korean](README.ko.md)
+[Installation](#installation) | [Usage](#usage) | [Gates](#gates) | [Multi-CLI](#supported-cli-tools) | [Korean](README.ko.md)
 
 </div>
 
@@ -19,7 +19,7 @@ Stop shipping bugs. Enforce structured reviews at every development phase.
 
 ## What is Claude Gate?
 
-Claude Gate is a Claude Code plugin that enforces **quality gates** at each development phase transition. Catch defects early by requiring structured, checklist-based reviews before moving to the next phase.
+Claude Gate enforces **quality gates** at each development phase transition. Catch defects early by requiring structured, checklist-based reviews before moving to the next phase.
 
 ```
   Planning          Design           Development        Verification
@@ -34,6 +34,16 @@ Claude Gate is a Claude Code plugin that enforces **quality gates** at each deve
 ```
 
 Each gate produces a **structured report** with a clear verdict: move forward, revise, or block.
+
+## Supported CLI Tools
+
+| CLI Tool | Status | Gate Command |
+|----------|--------|-------------|
+| **Claude Code** | Fully supported | `/gate spec`, `/gate code`, `/gate release` |
+| **Codex CLI** | Fully supported | `run gate-spec`, `run gate-code`, `run gate-release` |
+| **Gemini CLI** | Fully supported | `/gate:spec`, `/gate:code`, `/gate:release` |
+
+The installer **auto-detects** installed CLIs and lets you choose which to install for.
 
 ## Installation
 
@@ -51,32 +61,44 @@ cd claude-gate
 ./install.sh
 ```
 
-The installer will:
+The interactive installer will:
 
-| Step | What it does |
-|------|-------------|
-| 1 | Copy 5 specialized reviewer agents to `~/.claude/agents/` |
-| 2 | Install the `/gate` slash command to `~/.claude/commands/` |
-| 3 | Append Gate System workflow docs to your `CLAUDE.md` |
+1. Detect installed CLI tools (Claude Code, Codex, Gemini)
+2. Let you select one or more targets
+3. Install gate files in each CLI's native format
 
 > To uninstall, run `./uninstall.sh` - it cleanly removes everything (marker-based).
 
 ## Usage
 
-### Quick Start
+### Claude Code
 
 ```bash
 /gate              # Auto-detect phase and run the right gate
-/gate status       # See where you are
-```
-
-### Run a Specific Gate
-
-```bash
 /gate spec         # Review requirements & planning docs
 /gate design       # Review architecture & design docs
 /gate code         # Code quality review
 /gate release      # Final review: code + security (runs in parallel)
+/gate status       # See where you are
+```
+
+### Codex CLI
+
+```bash
+run gate-spec      # Review requirements
+run gate-design    # Review architecture
+run gate-code      # Code quality review
+run gate-release   # Final review: code + security
+```
+
+### Gemini CLI
+
+```bash
+/gate:spec         # Review requirements
+/gate:design       # Review architecture
+/gate:code         # Code quality review
+/gate:release      # Final review: code + security
+/gate:status       # See where you are
 ```
 
 ## Gates
@@ -151,19 +173,38 @@ The final gate. Runs **code review + security audit in parallel**.
 
 ```
 claude-gate/
-├── agents/
-│   ├── gate-keeper.md         # Orchestrator - detects phase, routes to reviewer
-│   ├── spec-reviewer.md       # Spec Gate reviewer
-│   ├── design-reviewer.md     # Design Gate reviewer
-│   ├── code-reviewer.md       # Code quality reviewer
-│   └── security-reviewer.md   # Security auditor
+├── agents/                       # Claude Code agents
+│   ├── gate-keeper.md
+│   ├── spec-reviewer.md
+│   ├── design-reviewer.md
+│   ├── code-reviewer.md
+│   └── security-reviewer.md
 ├── commands/
-│   └── gate.md                # /gate slash command definition
-├── claude-md-snippet.md       # Auto-appended to your CLAUDE.md
-├── install.sh                 # One-command installer
-├── uninstall.sh               # Clean uninstaller
+│   └── gate.md                   # Claude Code /gate command
+├── codex/                        # Codex CLI support
+│   ├── AGENTS.md
+│   └── skills/
+│       ├── gate-spec/SKILL.md
+│       ├── gate-design/SKILL.md
+│       ├── gate-code/SKILL.md
+│       └── gate-release/SKILL.md
+├── gemini/                       # Gemini CLI support
+│   ├── commands/gate/
+│   │   ├── spec.toml
+│   │   ├── design.toml
+│   │   ├── code.toml
+│   │   ├── release.toml
+│   │   └── status.toml
+│   └── agents/
+│       ├── spec-reviewer.md
+│       ├── design-reviewer.md
+│       ├── code-reviewer.md
+│       └── security-reviewer.md
+├── claude-md-snippet.md
+├── install.sh                    # Interactive multi-CLI installer
+├── uninstall.sh                  # Clean multi-CLI uninstaller
 ├── README.md
-└── README.ko.md               # Korean documentation
+└── README.ko.md
 ```
 
 ## Compatibility
@@ -171,12 +212,16 @@ claude-gate/
 | Environment | Status |
 |------------|--------|
 | Claude Code (standalone) | Fully supported |
+| Codex CLI | Fully supported |
+| Gemini CLI | Fully supported |
 | Sisyphus Multi-Agent System | Fully compatible |
 
 ## Requirements
 
+At least one of:
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI installed
-- `~/.claude/` directory exists
+- [Codex CLI](https://github.com/openai/codex) installed
+- [Gemini CLI](https://github.com/google-gemini/gemini-cli) installed
 
 ## Contributing
 

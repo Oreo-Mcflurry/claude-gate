@@ -2,7 +2,7 @@
 
 # Claude Gate
 
-**Claude Code를 위한 4단계 품질 게이트 시스템**
+**AI 코딩 어시스턴트를 위한 4단계 품질 게이트 시스템**
 
 버그를 출시하지 마세요. 모든 개발 단계에서 구조화된 리뷰를 강제합니다.
 
@@ -11,7 +11,7 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](pulls)
 [![Hits](https://hits.sh/github.com/Oreo-Mcflurry/claude-gate.svg?label=visitors&color=79C83D)](https://hits.sh/github.com/Oreo-Mcflurry/claude-gate/)
 
-[설치](#설치) | [사용법](#사용법) | [게이트 상세](#게이트-상세) | [English](README.md)
+[설치](#설치) | [사용법](#사용법) | [게이트 상세](#게이트-상세) | [멀티 CLI](#지원-cli-도구) | [English](README.md)
 
 </div>
 
@@ -19,14 +19,14 @@
 
 ## Claude Gate란?
 
-Claude Gate는 개발 단계 전환 시 **품질 게이트**를 적용하는 Claude Code 플러그인입니다. 다음 단계로 넘어가기 전에 체크리스트 기반의 구조화된 리뷰를 수행하여 결함을 조기에 발견합니다.
+Claude Gate는 개발 단계 전환 시 **품질 게이트**를 적용합니다. 다음 단계로 넘어가기 전에 체크리스트 기반의 구조화된 리뷰를 수행하여 결함을 조기에 발견합니다.
 
 ```
-    기획              설계              개발               검증
+     기획             설계             개발               검증
  +-----------+    +-----------+    +-----------+      +-----------+
  |           |    |           |    |           |      |           |
- |  요구사항  |    |  아키텍처  |    |   구현    |      |  QA +     |
- |  정의     |--->|  설계     |--->|          |----->|  보안     |
+ | 요구사항  |    | 아키텍처  |    |   구현    |      |  QA +     |
+ | 정의      |--->| 설계      |--->|           |----->|  보안     |
  |           |    |           |    |           |      |           |
  +-----------+    +-----------+    +-----------+      +-----------+
        |                |                |                  |
@@ -34,6 +34,16 @@ Claude Gate는 개발 단계 전환 시 **품질 게이트**를 적용하는 Cla
 ```
 
 각 게이트는 명확한 판정이 포함된 **구조화된 리포트**를 생성합니다: 통과, 수정, 또는 차단.
+
+## 지원 CLI 도구
+
+| CLI 도구 | 상태 | 게이트 명령어 |
+|---------|------|-------------|
+| **Claude Code** | 완벽 지원 | `/gate spec`, `/gate code`, `/gate release` |
+| **Codex CLI** | 완벽 지원 | `run gate-spec`, `run gate-code`, `run gate-release` |
+| **Gemini CLI** | 완벽 지원 | `/gate:spec`, `/gate:code`, `/gate:release` |
+
+설치 시 **자동으로 CLI를 감지**하고 어디에 설치할지 선택할 수 있습니다.
 
 ## 설치
 
@@ -51,32 +61,44 @@ cd claude-gate
 ./install.sh
 ```
 
-설치 시 수행되는 작업:
+인터랙티브 설치 과정:
 
-| 단계 | 내용 |
-|------|-----|
-| 1 | 5개의 전문 리뷰어 에이전트를 `~/.claude/agents/`에 복사 |
-| 2 | `/gate` 슬래시 명령어를 `~/.claude/commands/`에 설치 |
-| 3 | Gate System 워크플로우 문서를 `CLAUDE.md`에 추가 |
+1. 설치된 CLI 도구 자동 감지 (Claude Code, Codex, Gemini)
+2. 하나 이상의 설치 대상 선택
+3. 각 CLI의 네이티브 형식으로 게이트 파일 설치
 
 > 제거하려면 `./uninstall.sh`를 실행하세요 - 마커 기반으로 깔끔하게 제거됩니다.
 
 ## 사용법
 
-### 빠른 시작
+### Claude Code
 
 ```bash
 /gate              # 현재 단계를 자동 감지하여 적절한 게이트 실행
-/gate status       # 현재 상태 확인
-```
-
-### 특정 게이트 실행
-
-```bash
 /gate spec         # 요구사항 및 기획 문서 리뷰
 /gate design       # 아키텍처 및 설계 문서 리뷰
 /gate code         # 코드 품질 리뷰
 /gate release      # 최종 리뷰: 코드 + 보안 (병렬 실행)
+/gate status       # 현재 상태 확인
+```
+
+### Codex CLI
+
+```bash
+run gate-spec      # 요구사항 리뷰
+run gate-design    # 아키텍처 리뷰
+run gate-code      # 코드 품질 리뷰
+run gate-release   # 최종 리뷰: 코드 + 보안
+```
+
+### Gemini CLI
+
+```bash
+/gate:spec         # 요구사항 리뷰
+/gate:design       # 아키텍처 리뷰
+/gate:code         # 코드 품질 리뷰
+/gate:release      # 최종 리뷰: 코드 + 보안
+/gate:status       # 현재 상태 확인
 ```
 
 ## 게이트 상세
@@ -151,19 +173,38 @@ cd claude-gate
 
 ```
 claude-gate/
-├── agents/
-│   ├── gate-keeper.md         # 오케스트레이터 - 단계 감지, 리뷰어 라우팅
-│   ├── spec-reviewer.md       # Spec Gate 리뷰어
-│   ├── design-reviewer.md     # Design Gate 리뷰어
-│   ├── code-reviewer.md       # 코드 품질 리뷰어
-│   └── security-reviewer.md   # 보안 감사자
+├── agents/                       # Claude Code 에이전트
+│   ├── gate-keeper.md
+│   ├── spec-reviewer.md
+│   ├── design-reviewer.md
+│   ├── code-reviewer.md
+│   └── security-reviewer.md
 ├── commands/
-│   └── gate.md                # /gate 슬래시 명령어 정의
-├── claude-md-snippet.md       # CLAUDE.md에 자동 추가되는 내용
-├── install.sh                 # 원커맨드 설치
-├── uninstall.sh               # 깔끔한 제거
-├── README.md                  # 영문 문서
-└── README.ko.md               # 한국어 문서 (이 파일)
+│   └── gate.md                   # Claude Code /gate 명령어
+├── codex/                        # Codex CLI 지원
+│   ├── AGENTS.md
+│   └── skills/
+│       ├── gate-spec/SKILL.md
+│       ├── gate-design/SKILL.md
+│       ├── gate-code/SKILL.md
+│       └── gate-release/SKILL.md
+├── gemini/                       # Gemini CLI 지원
+│   ├── commands/gate/
+│   │   ├── spec.toml
+│   │   ├── design.toml
+│   │   ├── code.toml
+│   │   ├── release.toml
+│   │   └── status.toml
+│   └── agents/
+│       ├── spec-reviewer.md
+│       ├── design-reviewer.md
+│       ├── code-reviewer.md
+│       └── security-reviewer.md
+├── claude-md-snippet.md
+├── install.sh                    # 인터랙티브 멀티 CLI 설치
+├── uninstall.sh                  # 멀티 CLI 제거
+├── README.md
+└── README.ko.md
 ```
 
 ## 호환성
@@ -171,12 +212,16 @@ claude-gate/
 | 환경 | 상태 |
 |------|------|
 | Claude Code (독립 실행) | 완벽 지원 |
+| Codex CLI | 완벽 지원 |
+| Gemini CLI | 완벽 지원 |
 | Sisyphus 멀티 에이전트 시스템 | 완벽 호환 |
 
 ## 요구사항
 
+다음 중 하나 이상:
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI 설치
-- `~/.claude/` 디렉토리 존재
+- [Codex CLI](https://github.com/openai/codex) 설치
+- [Gemini CLI](https://github.com/google-gemini/gemini-cli) 설치
 
 ## 기여
 

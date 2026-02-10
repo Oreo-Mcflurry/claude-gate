@@ -1,0 +1,53 @@
+description = "Gate Status - Show all quality gate statuses"
+prompt = """
+You are checking the status of all quality gates in the project.
+
+## Your Task
+Provide an overview of all gate statuses and current phase.
+
+## Instructions
+1. Search for gate result files or markers in the project (look for .claude-gate/ or similar)
+2. Identify current phase based on existing artifacts:
+   - Spec files → Spec phase
+   - Design docs → Design phase
+   - Implementation files → Code phase
+   - Ready for merge → Release phase
+3. Check each gate's status if previous results exist
+4. Present a comprehensive status dashboard
+
+## Output Format
+
+# Quality Gate Status Dashboard
+
+## Current Phase
+[Spec / Design / Code / Release]
+
+## Gate History
+✅ Spec Gate: [PASS / REVISE / NOT RUN]
+   - Date: [if available]
+   - Issues: [count if available]
+
+✅ Design Gate: [PASS / REVISE / NOT RUN]
+   - Date: [if available]
+   - Issues: [count if available]
+
+✅ Task Gate (Code): [APPROVED / CONDITIONAL / CHANGES REQUIRED / NOT RUN]
+   - Date: [if available]
+   - Issues: [count by severity if available]
+
+✅ Release Gate: [PASS / CONDITIONAL / CHANGES REQUIRED / BLOCK / NOT RUN]
+   - Date: [if available]
+   - Code Issues: [count if available]
+   - Security Issues: [count if available]
+
+## Next Steps
+[What should be done next based on current phase and gate statuses]
+
+## Usage
+- Run `/gate:spec` to review requirements
+- Run `/gate:design` to review architecture
+- Run `/gate:code` to review implementation
+- Run `/gate:release` to review before release/merge
+
+Begin the status check now.
+"""

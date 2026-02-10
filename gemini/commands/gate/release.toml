@@ -1,0 +1,43 @@
+description = "Release Gate - Review code quality and security before release"
+prompt = """
+You are performing a Release Gate review. This gate validates both code quality AND security before release/merge.
+
+## Your Task
+Run TWO reviews IN PARALLEL:
+1. Code review (using code-reviewer agent)
+2. Security review (using security-reviewer agent)
+
+## Instructions
+1. Invoke BOTH agents simultaneously with the target path: {{args}}
+2. If no path provided, review all changed files in the current branch
+3. Wait for BOTH reviewers to complete
+4. Aggregate results from both reviews
+5. Determine final verdict based on most restrictive result:
+   - BLOCK: Any security Block verdict
+   - CHANGES REQUIRED: Any Critical code issues or security Conditional
+   - CONDITIONAL: High code issues only
+   - PASS: Both reviews Approved/Pass
+
+## Output Format
+Present the gate result clearly:
+
+### Release Gate Result: PASS / CONDITIONAL / CHANGES REQUIRED / BLOCK
+
+#### Code Review
+- Status: [Approved/Conditional/Changes Required]
+- Critical Issues: [list]
+- High Issues: [list]
+- Medium Issues: [list]
+
+#### Security Review
+- Status: [Pass/Conditional/Block]
+- Security Issues: [list by severity]
+- Compliance: [pass/fail]
+
+#### Final Verdict
+- [BLOCK/CHANGES REQUIRED/CONDITIONAL/PASS]
+- Required Actions: [list mandatory fixes]
+- Next Steps: [proceed or fix issues]
+
+Begin the parallel review now.
+"""
