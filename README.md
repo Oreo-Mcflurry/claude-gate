@@ -9,7 +9,7 @@ Stop shipping bugs. Enforce structured reviews at every development phase.
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet)](https://docs.anthropic.com/en/docs/claude-code)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](pulls)
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FOreo-Mcflurry%2Fclaude-gate&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=visitors&edge_flat=false)](https://hits.seeyoufarm.com)
+[![Hits](https://hits.sh/github.com/Oreo-Mcflurry/claude-gate.svg?label=visitors&color=79C83D)](https://hits.sh/github.com/Oreo-Mcflurry/claude-gate/)
 
 [Installation](#installation) | [Usage](#usage) | [Gates](#gates) | [Korean](README.ko.md)
 
