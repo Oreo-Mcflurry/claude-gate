@@ -37,10 +37,10 @@ Each gate produces a **structured report** with a clear verdict: move forward, r
 
 ## Installation
 
-### npx (Recommended)
+### npm (Recommended)
 
 ```bash
-npx @oreo-mcflurry-majang/claude-gate
+npm exec @oreo-mcflurry-majang/claude-gate
 ```
 
 ### Manual

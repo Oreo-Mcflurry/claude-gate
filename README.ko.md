@@ -37,10 +37,10 @@ Claude Gate는 개발 단계 전환 시 **품질 게이트**를 적용하는 Cla
 
 ## 설치
 
-### npx (권장)
+### npm (권장)
 
 ```bash
-npx @oreo-mcflurry-majang/claude-gate
+npm exec @oreo-mcflurry-majang/claude-gate
 ```
 
 ### 수동 설치
