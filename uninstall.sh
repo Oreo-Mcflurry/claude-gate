@@ -55,35 +55,117 @@ if [ ${#INSTALLED_CLIS[@]} -eq 0 ]; then
 fi
 
 echo -e "${YELLOW}Found Claude Gate in:${NC}"
-for i in "${!INSTALLED_CLIS[@]}"; do
-  echo -e "  ${CYAN}[$((i+1))]${NC} ${INSTALLED_NAMES[$i]}"
-done
 echo ""
 
-# ─── Interactive selection ───
+# ─── Interactive checkbox menu ───
+checkbox_menu() {
+  local -a items=("$@")
+  local count=${#items[@]}
+  local cursor=0
+  local -a toggled=()
+  local total_lines=$((count + 2))
+  local first_draw=true
+
+  for ((i = 0; i < count; i++)); do
+    toggled[$i]=1
+  done
+
+  tput civis 2>/dev/null || true
+
+  _render_menu() {
+    if [ "$first_draw" = true ]; then
+      first_draw=false
+    else
+      local j
+      for ((j = 0; j < total_lines; j++)); do
+        tput cuu1
+        tput el
+      done
+    fi
+
+    echo -e "  ${BOLD}Select targets (↑↓ Move, Space Toggle, Enter Submit):${NC}"
+    local i
+    for ((i = 0; i < count; i++)); do
+      local arrow="  "
+      local box="[ ]"
+      if [ "$cursor" -eq "$i" ]; then arrow="->"; fi
+      if [ "${toggled[$i]}" -eq 1 ]; then box="[x]"; fi
+
+      if [ "$cursor" -eq "$i" ]; then
+        echo -e "    ${CYAN}${arrow} ${box} ${items[$i]}${NC}"
+      else
+        echo "    ${arrow} ${box} ${items[$i]}"
+      fi
+    done
+    if [ "$cursor" -eq "$count" ]; then
+      echo -e "    ${CYAN}-> [ Submit ]${NC}"
+    else
+      echo "       [ Submit ]"
+    fi
+  }
+
+  _render_menu
+
+  while true; do
+    IFS= read -rsn1 key
+    case "$key" in
+      $'\033')
+        read -rsn2 seq
+        case "$seq" in
+          '[A')
+            if [ "$cursor" -gt 0 ]; then
+              cursor=$((cursor - 1))
+            fi
+            ;;
+          '[B')
+            if [ "$cursor" -lt "$count" ]; then
+              cursor=$((cursor + 1))
+            fi
+            ;;
+        esac
+        ;;
+      ' ')
+        if [ "$cursor" -eq "$count" ]; then
+          break
+        else
+          if [ "${toggled[$cursor]}" -eq 1 ]; then
+            toggled[$cursor]=0
+          else
+            toggled[$cursor]=1
+          fi
+        fi
+        ;;
+      '')
+        break
+        ;;
+    esac
+    _render_menu
+  done
+
+  tput cnorm 2>/dev/null || true
+
+  MENU_RESULT=()
+  for ((i = 0; i < count; i++)); do
+    if [ "${toggled[$i]}" -eq 1 ]; then
+      MENU_RESULT+=("$i")
+    fi
+  done
+}
+
+# ─── Selection logic ───
 declare -a SELECTED=()
 
 if [ "$ALL_MODE" = true ]; then
   SELECTED=("${INSTALLED_CLIS[@]}")
-  echo -e "Auto-selected all (--all mode)"
+  echo -e "  Auto-selected all (--all mode)"
 elif [ ${#INSTALLED_CLIS[@]} -eq 1 ]; then
   SELECTED=("${INSTALLED_CLIS[0]}")
-  echo -e "Auto-selected: ${BOLD}${INSTALLED_NAMES[0]}${NC}"
+  echo -e "  Auto-selected: ${BOLD}${INSTALLED_NAMES[0]}${NC}"
 else
-  echo -e "${BOLD}Select targets to uninstall (space-separated numbers, or 'a' for all):${NC}"
-  echo -n "> "
-  read -r selection
-
-  if [[ "$selection" == "a" || "$selection" == "A" || "$selection" == "all" ]]; then
-    SELECTED=("${INSTALLED_CLIS[@]}")
-  else
-    for num in $selection; do
-      idx=$((num - 1))
-      if [ "$idx" -ge 0 ] && [ "$idx" -lt ${#INSTALLED_CLIS[@]} ]; then
-        SELECTED+=("${INSTALLED_CLIS[$idx]}")
-      fi
-    done
-  fi
+  checkbox_menu "${INSTALLED_NAMES[@]}"
+  for idx in "${MENU_RESULT[@]}"; do
+    SELECTED+=("${INSTALLED_CLIS[$idx]}")
+  done
 fi
 
 if [ ${#SELECTED[@]} -eq 0 ]; then
