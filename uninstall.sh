@@ -118,7 +118,7 @@ uninstall_claude() {
   for agent in "${AGENTS[@]}"; do
     if [ -f "$AGENTS_DIR/$agent" ]; then
       rm "$AGENTS_DIR/$agent"
-      ((removed++))
+      removed=$((removed + 1))
     fi
   done
   echo -e "  ${GREEN}[1/3]${NC} Removed $removed agent(s)"
@@ -165,7 +165,7 @@ uninstall_codex() {
   for skill in "${SKILLS[@]}"; do
     if [ -d "$SKILLS_DIR/$skill" ]; then
       rm -rf "$SKILLS_DIR/$skill"
-      ((removed++))
+      removed=$((removed + 1))
     fi
   done
   echo -e "  ${GREEN}[1/2]${NC} Removed $removed skill(s)"
@@ -206,7 +206,7 @@ uninstall_gemini() {
   for agent in "${AGENTS[@]}"; do
     if [ -f "$AGENTS_DIR/$agent" ]; then
       rm "$AGENTS_DIR/$agent"
-      ((removed++))
+      removed=$((removed + 1))
     fi
   done
   echo -e "  ${GREEN}[2/2]${NC} Removed $removed agent(s)"
