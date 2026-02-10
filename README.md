@@ -1,147 +1,179 @@
-# Claude Gate - 4-Phase Quality Gate System
+<div align="center">
 
-A Claude Code plugin that enforces quality gates at each development phase transition. Catch defects early by requiring structured reviews before moving to the next phase.
+# Claude Gate
 
-## Overview
+**4-Phase Quality Gate System for Claude Code**
 
-Claude Gate implements a **4-Phase Gate System** inspired by the SDD (Software Design Document) methodology:
+Stop shipping bugs. Enforce structured reviews at every development phase.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Claude Code](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet)](https://docs.anthropic.com/en/docs/claude-code)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](pulls)
+[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fyour-org%2Fclaude-gate&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=visitors&edge_flat=false)](https://hits.seeyoufarm.com)
+
+[Installation](#installation) | [Usage](#usage) | [Gates](#gates) | [Korean](README.ko.md)
+
+</div>
+
+---
+
+## What is Claude Gate?
+
+Claude Gate is a Claude Code plugin that enforces **quality gates** at each development phase transition. Catch defects early by requiring structured, checklist-based reviews before moving to the next phase.
 
 ```
-Phase 1: Planning    Phase 2: Design      Phase 3: Development   Phase 4: Verification
-Requirements   →   Architecture    →     Implementation   →    QA + Security
-
-[Spec Gate]        [Design Gate]        [Task Gate]           [Release Gate]
+  Planning          Design           Development        Verification
+ +-----------+    +-----------+    +-----------+      +-----------+
+ |           |    |           |    |           |      |           |
+ |  Require- |    |  Archi-   |    |  Implemen-|      |  QA +     |
+ |  ments    |--->|  tecture  |--->|  tation   |----->|  Security |
+ |           |    |           |    |           |      |           |
+ +-----------+    +-----------+    +-----------+      +-----------+
+       |                |                |                  |
+   Spec Gate       Design Gate      Task Gate         Release Gate
 ```
 
-Each gate runs a **checklist-based review** and produces a structured report with a clear verdict.
+Each gate produces a **structured report** with a clear verdict: move forward, revise, or block.
 
 ## Installation
 
 ```bash
-git clone https://github.com/your-org/claude-gate.git
+git clone https://github.com/Oreo-Mcflurry/claude-gate.git
 cd claude-gate
 ./install.sh
 ```
 
-This will:
-1. Copy agent files to `~/.claude/agents/`
-2. Copy the `/gate` command to `~/.claude/commands/`
-3. Append Gate System workflow documentation to your `CLAUDE.md`
+The installer will:
 
-## Uninstallation
+| Step | What it does |
+|------|-------------|
+| 1 | Copy 5 specialized reviewer agents to `~/.claude/agents/` |
+| 2 | Install the `/gate` slash command to `~/.claude/commands/` |
+| 3 | Append Gate System workflow docs to your `CLAUDE.md` |
 
-```bash
-cd claude-gate
-./uninstall.sh
-```
-
-Cleanly removes all agents, commands, and CLAUDE.md additions (marker-based removal).
+> To uninstall, run `./uninstall.sh` - it cleanly removes everything (marker-based).
 
 ## Usage
 
-### Run a specific gate
+### Quick Start
 
 ```bash
-/gate spec       # Spec Gate - review requirements/planning docs
-/gate design     # Design Gate - review architecture/design docs
-/gate code       # Task Gate - code quality review
-/gate release    # Release Gate - code + security review
+/gate              # Auto-detect phase and run the right gate
+/gate status       # See where you are
 ```
 
-### Auto-detect phase
+### Run a Specific Gate
 
 ```bash
-/gate            # Analyzes project state and runs the appropriate gate
-```
-
-### Check status
-
-```bash
-/gate status     # Show all gate statuses
+/gate spec         # Review requirements & planning docs
+/gate design       # Review architecture & design docs
+/gate code         # Code quality review
+/gate release      # Final review: code + security (runs in parallel)
 ```
 
 ## Gates
 
-### Spec Gate (Phase 1 → 2)
+### Spec Gate `Planning -> Design`
 
-Reviews planning and requirements documents for:
-- Requirements clarity (EARS format or equivalent)
-- Acceptance criteria (Given-When-Then)
-- Non-functional requirements (performance, security, scalability)
-- Scope boundaries (included/excluded)
-- Priority definition (Must/Should/Could)
+Reviews planning and requirements documents.
 
-**Verdict**: Pass / Revise
+| Checklist Item | What it checks |
+|---------------|---------------|
+| Requirements clarity | EARS format or equivalent structured requirements |
+| Acceptance criteria | Given-When-Then scenarios defined |
+| Non-functional requirements | Performance, security, scalability targets |
+| Scope boundaries | Explicitly included and excluded items |
+| Priority definition | Must / Should / Could (MoSCoW) |
 
-### Design Gate (Phase 2 → 3)
+**Verdict**: `Pass` | `Revise`
 
-Reviews architecture and design documents for:
-- API contracts (endpoints, schemas)
-- Data model definitions
-- Component dependency documentation
-- Tech stack selection rationale
-- Trade-off documentation
+---
 
-**Verdict**: Pass / Revise
+### Design Gate `Design -> Development`
 
-### Task Gate (Phase 3 → 4)
+Reviews architecture and design documents.
 
-Reviews implementation code for:
-- **Critical**: Hardcoded secrets, SQL injection, XSS, auth bypass
-- **High**: Missing error handling, input validation, unsafe dependencies
-- **Medium**: Large functions, duplicate code, missing tests, poor naming
-- **Performance**: N+1 queries, unnecessary re-renders, missing memoization
+| Checklist Item | What it checks |
+|---------------|---------------|
+| API contracts | Endpoints, request/response schemas |
+| Data models | Entity definitions, relationships |
+| Component dependencies | Service interaction documentation |
+| Tech stack rationale | Why each technology was chosen |
+| Trade-off documentation | Alternatives considered and reasons |
 
-**Verdict**: Approved / Conditional / Changes Required
+**Verdict**: `Pass` | `Revise`
 
-### Release Gate (Phase 4 → Deploy)
+---
 
-Runs both code review AND security review:
-- All Task Gate checks
-- Authentication/authorization audit
-- Input validation (SQLi, XSS, SSRF, Command Injection)
-- Data security (PII, secrets, encryption)
-- Dependency security (npm audit, pip audit)
-- AI/ML security (prompt injection, token limits)
+### Task Gate `Development -> Verification`
 
-**Verdict**: Pass / Conditional / Block
+Reviews implementation code with severity levels.
 
-## Gate Results
+| Severity | Examples |
+|----------|---------|
+| **Critical** | Hardcoded secrets, SQL injection, XSS, auth bypass |
+| **High** | Missing error handling, input validation gaps, unsafe deps |
+| **Medium** | Large functions, duplicate code, missing tests, poor naming |
+| **Performance** | N+1 queries, unnecessary re-renders, missing memoization |
 
-| Result | Meaning | Action |
-|--------|---------|--------|
+**Verdict**: `Approved` | `Conditional` | `Changes Required`
+
+---
+
+### Release Gate `Verification -> Deploy`
+
+The final gate. Runs **code review + security audit in parallel**.
+
+| Review Type | What it covers |
+|------------|---------------|
+| Code Review | All Task Gate checks with release-level thoroughness |
+| Security Audit | Auth, input validation (SQLi/XSS/SSRF), data security, dependency audit, AI/ML security |
+
+**Verdict**: `Pass` | `Conditional` | `Block`
+
+## Verdicts at a Glance
+
+| Verdict | Meaning | What to do |
+|---------|---------|-----------|
 | **Pass** | All checks satisfied | Proceed to next phase |
-| **Revise** | Issues found, fixable | Address feedback, re-run gate |
-| **Block** | Critical issues (Release Gate only) | Must resolve before release |
+| **Revise** | Issues found, all fixable | Address feedback, re-run the gate |
+| **Block** | Critical issues found | Must resolve before release (Release Gate only) |
 
-## Project Structure
+## Architecture
 
 ```
 claude-gate/
-├── README.md                    # This file
-├── install.sh                   # Installation script
-├── uninstall.sh                 # Uninstallation script
 ├── agents/
-│   ├── gate-keeper.md           # Gate orchestrator (opus, read-only)
-│   ├── spec-reviewer.md         # Spec Gate reviewer (sonnet)
-│   ├── design-reviewer.md       # Design Gate reviewer (sonnet)
-│   ├── code-reviewer.md         # Code quality reviewer (sonnet)
-│   └── security-reviewer.md     # Security reviewer (sonnet)
+│   ├── gate-keeper.md         # Orchestrator - detects phase, routes to reviewer
+│   ├── spec-reviewer.md       # Spec Gate reviewer
+│   ├── design-reviewer.md     # Design Gate reviewer
+│   ├── code-reviewer.md       # Code quality reviewer
+│   └── security-reviewer.md   # Security auditor
 ├── commands/
-│   └── gate.md                  # /gate slash command
-└── claude-md-snippet.md         # CLAUDE.md additions
+│   └── gate.md                # /gate slash command definition
+├── claude-md-snippet.md       # Auto-appended to your CLAUDE.md
+├── install.sh                 # One-command installer
+├── uninstall.sh               # Clean uninstaller
+├── README.md
+└── README.ko.md               # Korean documentation
 ```
 
 ## Compatibility
 
-- **Standalone**: Works with any Claude Code installation
-- **Sisyphus**: Fully compatible with the Sisyphus multi-agent system (agents appear in the standard `~/.claude/agents/` directory)
+| Environment | Status |
+|------------|--------|
+| Claude Code (standalone) | Fully supported |
+| Sisyphus Multi-Agent System | Fully compatible |
 
 ## Requirements
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI installed
 - `~/.claude/` directory exists
 
+## Contributing
+
+Contributions are welcome! Feel free to open issues or submit pull requests.
+
 ## License
 
-MIT
+[MIT](LICENSE)
