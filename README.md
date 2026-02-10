@@ -89,6 +89,7 @@ $gate-spec         # Review requirements
 $gate-design       # Review architecture
 $gate-code         # Code quality review
 $gate-release      # Final review: code + security
+$gate-status       # See where you are
 ```
 
 ### Gemini CLI
