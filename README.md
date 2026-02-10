@@ -40,7 +40,7 @@ Each gate produces a **structured report** with a clear verdict: move forward, r
 | CLI Tool | Status | Gate Command |
 |----------|--------|-------------|
 | **Claude Code** | Fully supported | `/gate spec`, `/gate code`, `/gate release` |
-| **Codex CLI** | Fully supported | `run gate-spec`, `run gate-code`, `run gate-release` |
+| **Codex CLI** | Fully supported | `$gate-spec`, `$gate-code`, `$gate-release` |
 | **Gemini CLI** | Fully supported | `/gate:spec`, `/gate:code`, `/gate:release` |
 
 The installer **auto-detects** installed CLIs and lets you choose which to install for.
@@ -85,10 +85,10 @@ The interactive installer will:
 ### Codex CLI
 
 ```bash
-run gate-spec      # Review requirements
-run gate-design    # Review architecture
-run gate-code      # Code quality review
-run gate-release   # Final review: code + security
+$gate-spec         # Review requirements
+$gate-design       # Review architecture
+$gate-code         # Code quality review
+$gate-release      # Final review: code + security
 ```
 
 ### Gemini CLI

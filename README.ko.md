@@ -40,7 +40,7 @@ Claude Gate는 개발 단계 전환 시 **품질 게이트**를 적용합니다.
 | CLI 도구 | 상태 | 게이트 명령어 |
 |---------|------|-------------|
 | **Claude Code** | 완벽 지원 | `/gate spec`, `/gate code`, `/gate release` |
-| **Codex CLI** | 완벽 지원 | `run gate-spec`, `run gate-code`, `run gate-release` |
+| **Codex CLI** | 완벽 지원 | `$gate-spec`, `$gate-code`, `$gate-release` |
 | **Gemini CLI** | 완벽 지원 | `/gate:spec`, `/gate:code`, `/gate:release` |
 
 설치 시 **자동으로 CLI를 감지**하고 어디에 설치할지 선택할 수 있습니다.
@@ -85,10 +85,10 @@ cd claude-gate
 ### Codex CLI
 
 ```bash
-run gate-spec      # 요구사항 리뷰
-run gate-design    # 아키텍처 리뷰
-run gate-code      # 코드 품질 리뷰
-run gate-release   # 최종 리뷰: 코드 + 보안
+$gate-spec         # 요구사항 리뷰
+$gate-design       # 아키텍처 리뷰
+$gate-code         # 코드 품질 리뷰
+$gate-release      # 최종 리뷰: 코드 + 보안
 ```
 
 ### Gemini CLI

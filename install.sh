@@ -201,7 +201,7 @@ install_codex() {
     echo -e "  ${GREEN}[2/2]${NC} No AGENTS.md to install (skipped)"
   fi
 
-  echo -e "  ${GREEN}Done!${NC} Use: run gate-spec, run gate-code, run gate-release"
+  echo -e "  ${GREEN}Done!${NC} Use: \$gate-spec, \$gate-code, \$gate-release"
   echo ""
 }
 
